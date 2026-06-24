@@ -1,0 +1,11 @@
+-- Optional demo data. Run AFTER schema.sql and AFTER at least one user signs up.
+-- Replace the owner UUID with a real auth user id (select id from auth.users).
+--
+-- do $$
+-- declare uid uuid := '00000000-0000-0000-0000-000000000000';
+-- begin
+--   insert into public.shipments (owner_id, status, service, origin, destination, recipient_name, weight_kg, declared_value)
+--   values
+--     (uid, 'in_transit', 'express', 'Accra, GH', 'London, UK', 'Jane Doe', 4.5, 1200),
+--     (uid, 'delivered',  'standard','Tema, GH',  'Lagos, NG',  'Kwame Mensah', 12, 300);
+-- end $$;
