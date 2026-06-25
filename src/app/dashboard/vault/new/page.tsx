@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/page-header";
-import { VaultForm } from "@/components/vault/vault-form";
+import { VaultComposer } from "@/components/vault/vault-composer";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = { title: "Add vault document — ShipVault" };
@@ -24,7 +24,7 @@ export default function NewVaultItemPage() {
           <div className="mb-5 flex items-center gap-2 text-sm text-vault">
             <ShieldCheck className="h-4 w-4" /> End-to-end server-side encryption
           </div>
-          <VaultForm />
+          <VaultComposer />
         </CardContent>
       </Card>
     </>

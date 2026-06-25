@@ -77,7 +77,8 @@ export interface VaultItem {
   access_level: VaultAccess;
   title: string;
   description: string | null;
-  encrypted_content: string;
+  encrypted_content: string | null;
+  storage_path: string | null;
   content_iv: string;
   content_tag: string;
   file_name: string | null;

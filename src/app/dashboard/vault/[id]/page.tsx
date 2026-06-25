@@ -79,7 +79,13 @@ export default async function VaultItemPage({ params }: { params: { id: string }
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <VaultReveal itemId={v.id} locked={locked} unlockAt={v.unlock_at} />
+            <VaultReveal
+              itemId={v.id}
+              locked={locked}
+              unlockAt={v.unlock_at}
+              isFile={!!v.storage_path}
+              fileName={v.file_name}
+            />
           </CardContent>
         </Card>
 

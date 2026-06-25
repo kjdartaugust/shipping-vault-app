@@ -54,6 +54,26 @@ export function decrypt(bundle: CipherBundle): string {
   return dec.toString("utf8");
 }
 
+export interface ByteCipher {
+  data: Buffer; // ciphertext bytes (store as the Storage object)
+  iv: string; // base64
+  tag: string; // base64 auth tag
+}
+
+/** Binary variant — used for file uploads stored in Supabase Storage. */
+export function encryptBytes(plain: Buffer): ByteCipher {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv(ALGO, getKey(), iv);
+  const data = Buffer.concat([cipher.update(plain), cipher.final()]);
+  return { data, iv: iv.toString("base64"), tag: cipher.getAuthTag().toString("base64") };
+}
+
+export function decryptBytes(data: Buffer, iv: string, tag: string): Buffer {
+  const decipher = crypto.createDecipheriv(ALGO, getKey(), Buffer.from(iv, "base64"));
+  decipher.setAuthTag(Buffer.from(tag, "base64"));
+  return Buffer.concat([decipher.update(data), decipher.final()]);
+}
+
 /** Short non-reversible fingerprint for display / integrity hints. */
 export function fingerprint(value: string): string {
   return crypto.createHash("sha256").update(value).digest("hex").slice(0, 12);

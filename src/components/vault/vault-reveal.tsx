@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Eye, EyeOff, Lock, Copy, Unlock } from "lucide-react";
-import { revealVaultItem } from "@/lib/actions/vault";
+import { Eye, EyeOff, Lock, Copy, Unlock, Download } from "lucide-react";
+import { revealVaultItem, downloadVaultFile } from "@/lib/actions/vault";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 
@@ -11,10 +11,14 @@ export function VaultReveal({
   itemId,
   locked,
   unlockAt,
+  isFile = false,
+  fileName,
 }: {
   itemId: string;
   locked: boolean;
   unlockAt: string | null;
+  isFile?: boolean;
+  fileName?: string | null;
 }) {
   const [content, setContent] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -43,6 +47,41 @@ export function VaultReveal({
       setContent(res.content ?? "");
       toast.success("Decrypted — logged to audit trail");
     });
+  }
+
+  function download() {
+    start(async () => {
+      const res = await downloadVaultFile(itemId);
+      if (res.error || !res.base64) {
+        toast.error(res.error ?? "Download failed.");
+        return;
+      }
+      const bytes = Uint8Array.from(atob(res.base64), (c) => c.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: res.mimeType }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = res.fileName ?? "vault-file";
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Decrypted & downloaded — logged to audit trail");
+    });
+  }
+
+  if (isFile) {
+    return (
+      <div className="flex items-center gap-3 rounded-lg border border-border bg-secondary/40 p-4">
+        <Download className="h-5 w-5 text-vault" />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{fileName ?? "Encrypted file"}</p>
+          <p className="text-xs text-muted-foreground">
+            Decrypted in-memory only when you download.
+          </p>
+        </div>
+        <Button variant="vault" disabled={pending} onClick={download}>
+          <Download className="h-4 w-4" /> {pending ? "Decrypting…" : "Decrypt & download"}
+        </Button>
+      </div>
+    );
   }
 
   if (content === null) {

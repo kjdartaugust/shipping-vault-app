@@ -48,7 +48,9 @@ cp .env.example .env.local   # then fill in the values below
    ```
    Put it in `VAULT_ENCRYPTION_KEY`.
 3. **Apply the schema** — paste `supabase/schema.sql` into the Supabase SQL
-   editor and run it (creates tables, triggers, and all RLS policies).
+   editor and run it (creates tables, triggers, and all RLS policies). Then run
+   `supabase/migrations/0001_vault_files.sql` to enable encrypted file uploads
+   (creates the private `vault-files` Storage bucket + its policies).
 4. **(Optional)** make yourself an admin after signing up:
    ```sql
    update public.profiles set role = 'admin' where email = 'you@example.com';
