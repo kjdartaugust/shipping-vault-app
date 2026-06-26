@@ -43,4 +43,10 @@ Next.js 14 App Router + Supabase (Postgres, Auth, RLS) + Tailwind. Path alias `@
 
 ## UI conventions
 
-Theming uses CSS variables in `src/app/globals.css` with `next-themes` (`class` strategy, dark default). The `vault` color (purple) is reserved for security/vault surfaces; `primary` (cyan) for general/shipping. Build on the primitives in `src/components/ui/*` and the `cn()` helper rather than ad-hoc styling. Status/category display metadata is centralized in `src/lib/utils.ts` (`SHIPMENT_STATUS_META`, `VAULT_CATEGORY_LABEL`, `TRACKING_FLOW`).
+The product is **VaultEx** — an enterprise "intelligence console" aesthetic (deep obsidian, electric cobalt, platinum text, neon-green secure accent). The UI is **forced single-dark**: `layout.tsx` sets `forcedTheme="dark"` and `<html class="dark">`; do not reintroduce a light theme or theme toggle. Design tokens live as CSS variables in `src/app/globals.css` (`--primary` cobalt `#2563EB`, `--secure` green `#10B981`, `--vault` indigo for vault surfaces, obsidian `--background`).
+
+Fonts: **Space Grotesk** for headings (auto-applied to `h1`–`h4` and `.font-display`), **Inter** for body, **JetBrains Mono** for terminal/audit surfaces (`.terminal` utility). Custom utilities in globals: `.glass` (glassmorphism), `.grid-bg`/`.grid-bg-animated`, `.hex-bg`, `.radial-fade`, `.glow-{primary,vault,secure}`, `.text-glow`, `.ring-conic`.
+
+Animation: **framer-motion** via the primitives in `src/components/motion.tsx` (`Reveal` for scroll-in, `UnlockCard` for hover lift) — keep motion in these client wrappers so server components stay server. **recharts** powers the admin dashboards in `src/components/admin/charts.tsx` (client). Other bespoke pieces: `vault/vault-door.tsx` (cinematic entry, once per session via `sessionStorage`), `vault/countdown.tsx` (time-lock timer).
+
+Build on the primitives in `src/components/ui/*` and the `cn()` helper. Display metadata is centralized in `src/lib/utils.ts`: `SHIPMENT_STATUS_META` (label + `tone` + `dot`; states surface as Queued/Secured/In Transit/Out for Delivery/Delivered/Cancelled/Flagged), `VAULT_CATEGORY_LABEL`, `VAULT_ACCESS_META` (Owner/Restricted/Time-locked), `securityClearance()` (STANDARD/CLASSIFIED/TOP SECRET from declared value), `TRACKING_FLOW`.

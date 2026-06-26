@@ -1,34 +1,39 @@
 import { type LucideIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export function StatCard({
   label,
   value,
   icon: Icon,
-  vault,
+  accent = "primary",
+  hint,
 }: {
   label: string;
   value: string | number;
   icon: LucideIcon;
-  vault?: boolean;
+  accent?: "primary" | "vault" | "secure";
+  hint?: string;
 }) {
+  const tone = {
+    primary: "bg-primary/10 text-primary",
+    vault: "bg-vault/10 text-vault",
+    secure: "bg-secure/10 text-secure",
+  }[accent];
+
   return (
-    <Card>
-      <CardContent className="flex items-center justify-between p-5">
+    <Card className="group relative overflow-hidden p-5">
+      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-foreground/[0.02] transition group-hover:scale-150" />
+      <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="mt-1 text-2xl font-bold">{value}</p>
+          <p className="terminal uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="mt-2 font-display text-3xl font-bold">{value}</p>
+          {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
         </div>
-        <div
-          className={cn(
-            "flex h-11 w-11 items-center justify-center rounded-lg",
-            vault ? "bg-vault/10 text-vault" : "bg-primary/10 text-primary"
-          )}
-        >
+        <div className={cn("flex h-11 w-11 items-center justify-center rounded-lg", tone)}>
           <Icon className="h-5 w-5" />
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }

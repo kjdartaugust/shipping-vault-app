@@ -1,4 +1,3 @@
-import { CheckCircle2, Circle, Dot } from "lucide-react";
 import { cn, timeAgo, SHIPMENT_STATUS_META } from "@/lib/utils";
 import type { ShipmentStatus } from "@/lib/types";
 
@@ -14,29 +13,29 @@ export function TrackingTimeline({ events }: { events: Event[] }) {
     return <p className="text-sm text-muted-foreground">No tracking events yet.</p>;
 
   return (
-    <ol className="relative space-y-6 border-l border-border pl-6">
+    <ol className="relative space-y-7 border-l border-border/80 pl-7">
       {events.map((e, i) => {
+        const meta = SHIPMENT_STATUS_META[e.status];
         const last = i === events.length - 1;
         return (
           <li key={i} className="relative">
             <span
               className={cn(
-                "absolute -left-[31px] flex h-5 w-5 items-center justify-center rounded-full",
-                last ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                "absolute -left-[35px] flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-background",
+                meta.dot,
+                last && "animate-pulse-ring"
               )}
-            >
-              {last ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-3 w-3" />}
-            </span>
+            />
             <div className="flex flex-wrap items-center gap-x-2">
-              <p className="font-medium">{SHIPMENT_STATUS_META[e.status].label}</p>
+              <span className={cn("rounded-md px-2 py-0.5 text-xs font-semibold", meta.tone)}>
+                {meta.label}
+              </span>
               {e.location && (
-                <span className="flex items-center text-sm text-muted-foreground">
-                  <Dot className="h-4 w-4" /> {e.location}
-                </span>
+                <span className="text-sm text-muted-foreground">· {e.location}</span>
               )}
             </div>
-            {e.note && <p className="text-sm text-muted-foreground">{e.note}</p>}
-            <p className="text-xs text-muted-foreground/70">{timeAgo(e.created_at)}</p>
+            {e.note && <p className="mt-1 text-sm text-foreground/80">{e.note}</p>}
+            <p className="mt-0.5 terminal text-muted-foreground/70">{timeAgo(e.created_at)}</p>
           </li>
         );
       })}

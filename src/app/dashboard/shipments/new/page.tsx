@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/dashboard/page-header";
 import { ShipmentForm } from "@/components/shipment-form";
 import { Card, CardContent } from "@/components/ui/card";
 
-export const metadata = { title: "New shipment — ShipVault" };
+export const metadata = { title: "New shipment — VaultEx" };
 
 export default function NewShipmentPage() {
   return (

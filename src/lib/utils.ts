@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { formatDistanceToNow } from "date-fns";
-import type { ShipmentStatus, VaultCategory } from "@/lib/types";
+import type { ShipmentStatus, VaultCategory, VaultAccess } from "@/lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,19 +37,56 @@ export function formatBytes(bytes: number) {
 
 export const SHIPMENT_STATUS_META: Record<
   ShipmentStatus,
-  { label: string; tone: string }
+  { label: string; tone: string; dot: string }
 > = {
-  pending: { label: "Pending", tone: "bg-zinc-500/15 text-zinc-400" },
-  booked: { label: "Booked", tone: "bg-blue-500/15 text-blue-400" },
-  in_transit: { label: "In Transit", tone: "bg-amber-500/15 text-amber-400" },
+  pending: {
+    label: "Queued",
+    tone: "bg-slate-500/15 text-slate-300 ring-1 ring-slate-500/30",
+    dot: "bg-slate-400",
+  },
+  booked: {
+    label: "Secured",
+    tone: "bg-secure/15 text-secure ring-1 ring-secure/30",
+    dot: "bg-secure",
+  },
+  in_transit: {
+    label: "In Transit",
+    tone: "bg-primary/15 text-primary ring-1 ring-primary/30",
+    dot: "bg-primary",
+  },
   out_for_delivery: {
     label: "Out for Delivery",
-    tone: "bg-indigo-500/15 text-indigo-400",
+    tone: "bg-vault/15 text-vault ring-1 ring-vault/30",
+    dot: "bg-vault",
   },
-  delivered: { label: "Delivered", tone: "bg-emerald-500/15 text-emerald-400" },
-  cancelled: { label: "Cancelled", tone: "bg-rose-500/15 text-rose-400" },
-  exception: { label: "Exception", tone: "bg-red-500/20 text-red-400" },
+  delivered: {
+    label: "Delivered",
+    tone: "bg-secure/15 text-secure ring-1 ring-secure/30",
+    dot: "bg-secure",
+  },
+  cancelled: {
+    label: "Cancelled",
+    tone: "bg-slate-500/15 text-slate-400 ring-1 ring-slate-500/30",
+    dot: "bg-slate-500",
+  },
+  exception: {
+    label: "Flagged",
+    tone: "bg-red-500/15 text-red-400 ring-1 ring-red-500/40",
+    dot: "bg-red-500",
+  },
 };
+
+/** Derives a clearance classification from declared value for the badge UI. */
+export function securityClearance(declaredValue: number): {
+  label: string;
+  tone: string;
+} {
+  if (declaredValue >= 10000)
+    return { label: "TOP SECRET", tone: "bg-red-500/15 text-red-400 ring-1 ring-red-500/40" };
+  if (declaredValue >= 1000)
+    return { label: "CLASSIFIED", tone: "bg-vault/15 text-vault ring-1 ring-vault/40" };
+  return { label: "STANDARD", tone: "bg-secure/15 text-secure ring-1 ring-secure/30" };
+}
 
 export const VAULT_CATEGORY_LABEL: Record<VaultCategory, string> = {
   certificate: "Certificate",
@@ -59,6 +96,15 @@ export const VAULT_CATEGORY_LABEL: Record<VaultCategory, string> = {
   insurance: "Insurance",
   identity: "Identity",
   other: "Other",
+};
+
+export const VAULT_ACCESS_META: Record<
+  VaultAccess,
+  { label: string; tone: string }
+> = {
+  private: { label: "Owner", tone: "bg-secure/15 text-secure ring-1 ring-secure/30" },
+  restricted: { label: "Restricted", tone: "bg-primary/15 text-primary ring-1 ring-primary/30" },
+  time_locked: { label: "Time-locked", tone: "bg-vault/15 text-vault ring-1 ring-vault/30" },
 };
 
 /** Ordered milestones used by the tracking timeline UI. */

@@ -7,14 +7,18 @@ import {
   Tag,
   ShieldAlert,
   ScrollText,
+  Clock,
+  Lock,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VaultReveal } from "@/components/vault/vault-reveal";
 import { DeleteVaultButton } from "@/components/vault/delete-button";
+import { Countdown } from "@/components/vault/countdown";
 import {
   VAULT_CATEGORY_LABEL,
+  VAULT_ACCESS_META,
   formatBytes,
   formatDate,
   timeAgo,
@@ -22,12 +26,20 @@ import {
 import type { VaultItem, VaultAuditEntry } from "@/lib/types";
 
 const ACTION_LABEL: Record<string, string> = {
-  created: "Created",
-  updated: "Updated",
-  deleted: "Deleted",
-  decrypted: "Decrypted & viewed",
-  viewed: "Viewed",
-  unlock_denied: "Unlock denied (time-locked)",
+  created: "CREATED",
+  updated: "UPDATED",
+  deleted: "DELETED",
+  decrypted: "DECRYPTED",
+  viewed: "VIEWED",
+  unlock_denied: "UNLOCK_DENIED",
+};
+
+const ACTION_TONE: Record<string, string> = {
+  decrypted: "text-secure",
+  created: "text-primary",
+  updated: "text-primary",
+  deleted: "text-red-400",
+  unlock_denied: "text-amber-400",
 };
 
 export default async function VaultItemPage({ params }: { params: { id: string } }) {
@@ -48,6 +60,7 @@ export default async function VaultItemPage({ params }: { params: { id: string }
     .limit(50);
 
   const locked = !!v.unlock_at && new Date(v.unlock_at) > new Date();
+  const access = VAULT_ACCESS_META[v.access_level];
 
   return (
     <>
@@ -60,11 +73,12 @@ export default async function VaultItemPage({ params }: { params: { id: string }
 
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight">{v.title}</h1>
-            <Badge className="bg-vault/15 text-vault">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="font-display text-2xl font-bold tracking-tight">{v.title}</h1>
+            <Badge className="bg-vault/15 text-vault ring-1 ring-vault/30">
               {VAULT_CATEGORY_LABEL[v.category]}
             </Badge>
+            <Badge className={`terminal ${access.tone}`}>{access.label}</Badge>
           </div>
           {v.description && <p className="mt-1 text-muted-foreground">{v.description}</p>}
         </div>
@@ -72,22 +86,43 @@ export default async function VaultItemPage({ params }: { params: { id: string }
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2 border-vault/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-vault" /> Encrypted content
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <VaultReveal
-              itemId={v.id}
-              locked={locked}
-              unlockAt={v.unlock_at}
-              isFile={!!v.storage_path}
-              fileName={v.file_name}
-            />
-          </CardContent>
-        </Card>
+        <div className="space-y-6 lg:col-span-2">
+          {locked && (
+            <Card className="border-vault/30 bg-vault/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Clock className="h-5 w-5 text-vault" /> Time-locked — releases in
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Countdown unlockAt={v.unlock_at!} />
+                <p className="terminal text-muted-foreground">
+                  TARGET: {new Date(v.unlock_at!).toISOString()}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card className="border-vault/20">
+            <CardHeader className="flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <ShieldAlert className="h-5 w-5 text-vault" /> Encrypted content
+              </CardTitle>
+              <Badge className="gap-1.5 bg-secure/15 text-secure ring-1 ring-secure/30">
+                <Lock className="h-3 w-3" /> AES-256-GCM
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <VaultReveal
+                itemId={v.id}
+                locked={locked}
+                unlockAt={v.unlock_at}
+                isFile={!!v.storage_path}
+                fileName={v.file_name}
+              />
+            </CardContent>
+          </Card>
+        </div>
 
         <div className="space-y-6">
           <Card>
@@ -95,13 +130,11 @@ export default async function VaultItemPage({ params }: { params: { id: string }
               <CardTitle className="text-base">Metadata</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-              <Row icon={Tag} label="Access" value={v.access_level.replace("_", " ")} />
+              <Row icon={Tag} label="Access" value={access.label} />
               <Row icon={Fingerprint} label="Size" value={formatBytes(v.byte_size)} />
               <Row icon={Calendar} label="Stored" value={formatDate(v.created_at)} />
               {v.file_name && <Row icon={Tag} label="File" value={v.file_name} />}
-              {v.unlock_at && (
-                <Row icon={Calendar} label="Unlocks" value={formatDate(v.unlock_at)} />
-              )}
+              {v.unlock_at && <Row icon={Calendar} label="Unlocks" value={formatDate(v.unlock_at)} />}
             </CardContent>
           </Card>
 
@@ -112,25 +145,32 @@ export default async function VaultItemPage({ params }: { params: { id: string }
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-3 text-sm">
-                {(audit ?? []).map((a: VaultAuditEntry) => (
-                  <li key={a.id} className="flex items-center justify-between gap-2">
-                    <span
-                      className={
-                        a.action === "unlock_denied" ? "text-amber-500" : "text-foreground"
-                      }
-                    >
-                      {ACTION_LABEL[a.action] ?? a.action}
-                    </span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {timeAgo(a.created_at)}
-                    </span>
+              <div className="overflow-hidden rounded-lg border border-border bg-background/60">
+                <div className="flex items-center gap-1.5 border-b border-border px-3 py-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-secure/70" />
+                  <span className="ml-2 terminal text-muted-foreground">audit.log</span>
+                </div>
+                <ul className="terminal max-h-80 space-y-1.5 overflow-auto p-3">
+                  {(audit ?? []).map((a: VaultAuditEntry) => (
+                    <li key={a.id} className="flex items-start gap-2">
+                      <span className="text-muted-foreground/50">
+                        {new Date(a.created_at).toISOString().slice(5, 19).replace("T", " ")}
+                      </span>
+                      <span className={ACTION_TONE[a.action] ?? "text-foreground"}>
+                        {ACTION_LABEL[a.action] ?? a.action.toUpperCase()}
+                      </span>
+                    </li>
+                  ))}
+                  {(!audit || audit.length === 0) && (
+                    <li className="text-muted-foreground">// no activity recorded</li>
+                  )}
+                  <li className="text-secure">
+                    ${" "}<span className="animate-blink">▋</span>
                   </li>
-                ))}
-                {(!audit || audit.length === 0) && (
-                  <li className="text-muted-foreground">No activity recorded.</li>
-                )}
-              </ul>
+                </ul>
+              </div>
             </CardContent>
           </Card>
         </div>

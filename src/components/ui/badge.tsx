@@ -17,5 +17,10 @@ export function Badge({ className, ...props }: React.HTMLAttributes<HTMLSpanElem
 
 export function StatusBadge({ status }: { status: ShipmentStatus }) {
   const meta = SHIPMENT_STATUS_META[status];
-  return <Badge className={meta.tone}>{meta.label}</Badge>;
+  return (
+    <Badge className={`gap-1.5 ${meta.tone}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+      {meta.label}
+    </Badge>
+  );
 }

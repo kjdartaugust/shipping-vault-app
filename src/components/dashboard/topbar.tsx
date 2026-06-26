@@ -1,8 +1,7 @@
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { LogOut, Bell, ShieldCheck } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import type { Profile } from "@/lib/types";
 
 export function Topbar({ profile, unread }: { profile: Profile; unread: number }) {
@@ -15,25 +14,42 @@ export function Topbar({ profile, unread }: { profile: Profile; unread: number }
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border/60 bg-background/70 px-6 backdrop-blur-xl">
-      <div className="flex items-center gap-2">
-        {unread > 0 && (
-          <Badge className="bg-primary/15 text-primary">{unread} new</Badge>
-        )}
+      <div className="flex items-center gap-2 terminal text-secure">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-secure opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-secure" />
+        </span>
+        SECURE SESSION
       </div>
+
       <div className="flex items-center gap-3">
-        <ThemeToggle />
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-vault text-xs font-semibold text-white">
+        <Link href="/dashboard/notifications" className="relative">
+          <Button variant="ghost" size="icon" aria-label="Notifications">
+            <Bell className="h-[18px] w-[18px]" />
+          </Button>
+          {unread > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+              {unread > 9 ? "9+" : unread}
+            </span>
+          )}
+        </Link>
+
+        <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-2.5 py-1.5">
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-primary to-vault text-xs font-semibold text-white">
             {initials}
           </div>
-          <div className="hidden text-sm sm:block">
-            <p className="font-medium leading-tight">{profile.full_name ?? "User"}</p>
-            <p className="text-xs capitalize text-muted-foreground">{profile.role}</p>
+          <div className="hidden text-sm leading-tight sm:block">
+            <p className="font-medium">{profile.full_name ?? "Operator"}</p>
+            <p className="flex items-center gap-1 terminal uppercase text-muted-foreground">
+              <ShieldCheck className="h-3 w-3 text-secure" />
+              {profile.role}
+            </p>
           </div>
         </div>
+
         <form action={signOut}>
           <Button variant="ghost" size="icon" aria-label="Sign out">
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-[18px] w-[18px]" />
           </Button>
         </form>
       </div>

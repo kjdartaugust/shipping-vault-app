@@ -1,12 +1,15 @@
-# ShipVault — Secure Shipping & Document Vault
+# VaultEx — Ship. Secure. Control.
 
-A premium full-stack logistics platform with a **bank-grade document vault**.
-Book and track shipments, generate waybills, assign delivery agents — and store
-the high-value paperwork that proves a shipment's worth (certificates, contracts,
-customs docs) in an **AES-256-GCM encrypted, time-lockable, fully audited** vault.
+A premium full-stack logistics platform with a **bank-grade document vault**,
+wrapped in an enterprise "intelligence console" UI (deep obsidian, electric
+cobalt, neon-secure accents). Book and track shipments, generate waybills,
+assign delivery agents — and store the high-value paperwork that proves a
+shipment's worth (certificates, contracts, customs docs) in an **AES-256-GCM
+encrypted, time-lockable, fully audited** vault.
 
 Built with **Next.js 14 (App Router)**, **Supabase** (Postgres + Auth + RLS),
-**Tailwind CSS**, and a high-security dark/light UI.
+**Tailwind CSS**, **Framer Motion** animations, and **Recharts** admin
+dashboards — forced-dark, high-security UI throughout.
 
 ## Features
 

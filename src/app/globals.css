@@ -2,76 +2,139 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * VaultEx design system — deep obsidian, electric cobalt, platinum, neon secure.
+ * Single forced-dark aesthetic (Palantir intelligence meets Harvey precision).
+ */
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 199 89% 48%;
+  :root,
+  .dark {
+    --background: 222 46% 5%; /* #080B14 obsidian */
+    --foreground: 214 32% 91%; /* #E2E8F0 platinum */
+    --card: 221 40% 8%;
+    --card-foreground: 214 32% 91%;
+    --primary: 221 83% 53%; /* #2563EB electric cobalt */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 199 89% 48%;
+    --secondary: 220 33% 13%;
+    --secondary-foreground: 214 32% 91%;
+    --muted: 220 30% 12%;
+    --muted-foreground: 215 18% 60%;
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 199 89% 48%;
-    --vault: 262 83% 58%;
+    --border: 220 31% 16%;
+    --input: 220 31% 16%;
+    --ring: 221 83% 53%;
+    --vault: 239 84% 67%; /* indigo accent for vault surfaces */
     --vault-foreground: 0 0% 100%;
-    --radius: 0.75rem;
-  }
-
-  .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 222 44% 9%;
-    --card-foreground: 210 40% 98%;
-    --primary: 199 89% 52%;
-    --primary-foreground: 222 47% 6%;
-    --secondary: 217 33% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 14%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 199 89% 52%;
-    --accent-foreground: 222 47% 6%;
-    --destructive: 0 63% 51%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 199 89% 52%;
-    --vault: 262 83% 66%;
-    --vault-foreground: 222 47% 6%;
+    --secure: 160 84% 39%; /* #10B981 neon-secure */
+    --secure-foreground: 0 0% 100%;
+    --radius: 0.6rem;
   }
 
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: dark;
+  }
   body {
     @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv01";
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
+  /* Glassmorphism surface */
   .glass {
-    @apply bg-card/70 backdrop-blur-xl border border-border/60;
+    background: hsl(221 40% 9% / 0.6);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid hsl(214 32% 91% / 0.08);
   }
-  .vault-grid {
-    background-image: radial-gradient(
-      hsl(var(--vault) / 0.08) 1px,
-      transparent 1px
-    );
-    background-size: 22px 22px;
+
+  /* Animated technical grid background */
+  .grid-bg {
+    background-image: linear-gradient(hsl(var(--primary) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
   }
+  .grid-bg-animated {
+    background-image: linear-gradient(hsl(var(--primary) / 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: grid-pan 8s linear infinite;
+  }
+
+  /* Hexagonal mesh overlay (pure SVG data-uri, no libs) */
+  .hex-bg {
+    background-image: url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 0L56 16.18V49.5L28 65.7 0 49.5V16.18L28 0z' fill='none' stroke='%232563EB' stroke-opacity='0.10' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 56px 100px;
+  }
+
+  .radial-fade {
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 80%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 80%);
+  }
+
   .text-gradient {
-    @apply bg-gradient-to-r from-primary to-vault bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text text-transparent;
   }
-  .glow {
-    box-shadow: 0 0 0 1px hsl(var(--border)),
-      0 8px 40px -8px hsl(var(--vault) / 0.35);
+  .text-glow {
+    text-shadow: 0 0 28px hsl(var(--primary) / 0.45);
   }
+
+  .glow-primary {
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3), 0 12px 40px -10px hsl(var(--primary) / 0.5);
+  }
+  .glow-secure {
+    box-shadow: 0 0 0 1px hsl(var(--secure) / 0.4), 0 0 24px -6px hsl(var(--secure) / 0.55);
+  }
+  .glow-vault {
+    box-shadow: 0 0 0 1px hsl(var(--vault) / 0.35), 0 16px 50px -12px hsl(var(--vault) / 0.5);
+  }
+
+  .terminal {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .ring-conic {
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--primary)),
+      hsl(var(--vault)),
+      hsl(var(--secure)),
+      hsl(var(--primary))
+    );
+  }
+}
+
+/* Slim, dark scrollbars to match the intelligence-console feel */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(220 31% 18%);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(221 83% 53% / 0.6);
+  background-clip: content-box;
 }

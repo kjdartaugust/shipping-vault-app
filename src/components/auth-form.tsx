@@ -61,7 +61,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       <p className="text-center text-sm text-muted-foreground">
         {mode === "signin" ? (
           <>
-            New to ShipVault?{" "}
+            New to VaultEx?{" "}
             <Link href="/register" className="text-primary hover:underline">
               Create an account
             </Link>

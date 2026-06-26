@@ -1,15 +1,24 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "outline" | "ghost" | "vault" | "destructive";
+type Variant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "vault"
+  | "secure"
+  | "destructive";
 type Size = "sm" | "md" | "lg" | "icon";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
-  secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-  outline: "border border-border bg-transparent hover:bg-secondary",
+  primary:
+    "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.7)]",
+  secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/70 border border-border",
+  outline: "border border-border bg-transparent hover:bg-secondary hover:border-primary/40",
   ghost: "hover:bg-secondary",
-  vault: "bg-vault text-vault-foreground hover:bg-vault/90 shadow-sm",
+  vault: "bg-vault text-vault-foreground hover:bg-vault/90 shadow-[0_8px_24px_-8px_hsl(var(--vault)/0.7)]",
+  secure: "bg-secure text-secure-foreground hover:bg-secure/90 shadow-[0_8px_24px_-8px_hsl(var(--secure)/0.7)]",
   destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
 };
 

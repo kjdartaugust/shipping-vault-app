@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn, timeAgo } from "@/lib/utils";
 import type { AppNotification, NotificationType } from "@/lib/types";
 
-export const metadata = { title: "Notifications — ShipVault" };
+export const metadata = { title: "Notifications — VaultEx" };
 
 const ICON: Record<NotificationType, typeof Info> = {
   info: Info,

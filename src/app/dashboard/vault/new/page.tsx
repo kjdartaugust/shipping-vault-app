@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/dashboard/page-header";
 import { VaultComposer } from "@/components/vault/vault-composer";
 import { Card, CardContent } from "@/components/ui/card";
 
-export const metadata = { title: "Add vault document — ShipVault" };
+export const metadata = { title: "Add vault document — VaultEx" };
 
 export default function NewVaultItemPage() {
   return (
